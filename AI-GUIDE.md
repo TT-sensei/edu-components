@@ -29,6 +29,7 @@
 | 秒数を変更したチャレンジ | `TimeAttack`（`duration: 30`や`90`など） |
 | 結果ランク | `RankCalculator` |
 | 新記録判定 | `NewRecordJudge` |
+| 教材データの保存 | `StorageManager` |
 
 ## コンポーネント一覧
 
@@ -51,6 +52,21 @@
 - `Challenge60`：デフォルト60秒の`TimeAttack`ラッパー。秒数変更可能
 - `RankCalculator`：教材側の基準でランク算出
 - `NewRecordJudge`：現在値と過去最高値を比較。保存は行わない
+- `StorageManager`：namespace単位で値を保存・読み込み・削除。進捗や判定は行わない
+
+## StorageManagerの使い方
+
+教材ごとに固有のnamespaceを必ず指定します。
+
+```js
+import { StorageManager } from './index.js';
+
+const storage = new StorageManager('dictionary-master');
+storage.save('bestScore', 120);
+const best = storage.load('bestScore', 0);
+```
+
+内部キーは`edu:<namespace>:<key>`です。`clear()`は現在のnamespaceだけを削除します。数値、文字列、boolean、配列、object、nullを保存でき、localStorageが利用できない場合は簡易メモリフォールバックに切り替わります。
 
 ## 問題データ
 
@@ -94,6 +110,10 @@ const questions = [
 - `edu:timeup`：`{ mode, value, remaining, duration }`
 - `edu:newrecord`：`{ current, best, isNewRecord }`
 - `edu:rank`：`{ rank, accuracy, result }`
+- `edu:storagesave`：`{ namespace, key, storageKey, value }`
+- `edu:storageremove`：`{ namespace, key, storageKey }`
+- `edu:storageclear`：`{ namespace, keys }`
+- `edu:storageerror`：`{ operation, namespace, key, message, fallback }`
 
 ```js
 document.addEventListener('edu:correct', (event) => {
@@ -113,6 +133,10 @@ document.addEventListener('edu:correct', (event) => {
 - 音源をコンポーネントへ直接埋め込まない
 - 問題データと処理を分離する
 - 各コンポーネントで`localStorage`を勝手に使わない
+- 教材側でlocalStorage操作を乱立させず、保存には`StorageManager`を優先する
+- namespaceを教材ごとに分ける
+- `localStorage.clear()`を使用しない
+- 一時的なDOM状態などを何でも保存しない
 - タッチ操作で押せる十分な大きさを確保し、ドラッグだけを必須にしない
 - `QuestionPool`の元データ配列を直接並べ替えたり変更したりしない
 
@@ -129,4 +153,4 @@ document.addEventListener('edu:correct', (event) => {
 
 ## 今回扱わないもの
 
-StorageManager、ProgressManager、LevelManager、UnlockManager、BadgeManager、`edu-assets`連携、`sounds-recipe-`連携、`edu-effects`連携は、この共通基盤の現在の責務に含めません。必要になった段階で別コンポーネントとして設計します。
+ProgressManager、LevelManager、UnlockManager、BadgeManager、AchievementManager、`edu-assets`連携、`sounds-recipe-`連携、`edu-effects`連携は、この共通基盤の現在の責務に含めません。必要になった段階で別コンポーネントとして設計します。

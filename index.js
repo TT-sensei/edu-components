@@ -18,3 +18,4 @@ export { TimeAttack } from './js/time-attack.js';
 export { Challenge60 } from './js/challenge60.js';
 export { RankCalculator } from './js/rank-calculator.js';
 export { NewRecordJudge } from './js/new-record-judge.js';
+export { StorageManager } from './js/storage-manager.js';

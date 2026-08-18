@@ -8,7 +8,11 @@ export const EDU_EVENTS = Object.freeze({
   TIMER_WARNING: 'edu:timerwarning',
   TIMEUP: 'edu:timeup',
   NEW_RECORD: 'edu:newrecord',
-  RANK: 'edu:rank'
+  RANK: 'edu:rank',
+  STORAGE_SAVE: 'edu:storagesave',
+  STORAGE_REMOVE: 'edu:storageremove',
+  STORAGE_CLEAR: 'edu:storageclear',
+  STORAGE_ERROR: 'edu:storageerror'
 });
 
 export function resolveEventTarget(target) {

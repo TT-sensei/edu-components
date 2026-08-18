@@ -17,7 +17,7 @@
 | [edu-assets](https://tt-sensei.github.io/edu-assets/) | バッジ、コレクションなどの画像素材 |
 | [sounds-recipe-](https://tt-sensei.github.io/sounds-recipe-/) | 正解・達成などの教材用サウンド |
 | [edu-effects](https://tt-sensei.github.io/edu-effects/) | CSS UI、アニメーション、画面演出 |
-| edu-components | 画面切り替え、問題管理、正誤判定、得点、コンボなどのJavaScript処理 |
+| edu-components | 画面切り替え、問題管理、正誤判定、得点、コンボ、保存などのJavaScript処理 |
 
 ## デモ
 
@@ -64,6 +64,21 @@ manager.show('PLAY');
 - `Challenge60`：秒数を変更できる時間制チャレンジのラッパー
 - `RankCalculator`：結果からS / A / B / Cなどを算出
 - `NewRecordJudge`：今回の記録と過去最高記録を比較
+- `StorageManager`：namespace単位の安全な保存・読み込み・削除
+
+## StorageManager
+
+教材ごとに必ずnamespaceを指定して使います。内部キーは`edu:<namespace>:<key>`になります。
+
+```js
+import { StorageManager } from './index.js';
+
+const storage = new StorageManager('dictionary-master');
+storage.save('bestScore', 120);
+const best = storage.load('bestScore', 0);
+```
+
+number、string、boolean、array、object、nullをJSONとして保存できます。`load(key, defaultValue)`はデータがない場合や壊れている場合にデフォルト値を返します。`clear()`は現在のnamespaceのキーだけを削除し、ブラウザ全体の`localStorage.clear()`は使用しません。localStorageが使えない環境では簡易メモリフォールバックを使用します。
 
 ## 共通の問題データ
 
@@ -105,7 +120,7 @@ if (checker.check(input.value, ['東京', 'Tokyo'])) {
 
 `edu:correct` / `edu:wrong` / `edu:screenchange` / `edu:combo` / `edu:complete`
 
-時間制チャレンジでは、`edu:timerstart` / `edu:timerwarning` / `edu:timeup` / `edu:newrecord` / `edu:rank`も利用できます。
+時間制チャレンジでは、`edu:timerstart` / `edu:timerwarning` / `edu:timeup` / `edu:newrecord` / `edu:rank`も利用できます。保存処理では`edu:storagesave` / `edu:storageremove` / `edu:storageclear` / `edu:storageerror`を利用できます。
 
 ```js
 document.addEventListener('edu:correct', (event) => {
@@ -118,4 +133,4 @@ document.addEventListener('edu:correct', (event) => {
 
 ## 今後追加予定
 
-今後は、必要性を確認しながらStorageManager、ProgressManager、BadgeManager、アクセシビリティ補助などを検討します。現時点では、各コンポーネントは保存処理・画像素材・音源・CSS演出を内蔵していません。
+今後は、必要性を確認しながらProgressManager、LevelManager、UnlockManager、BadgeManager、AchievementManager、アクセシビリティ補助などを検討します。現時点では、StorageManagerは保存処理だけを担当し、進捗・レベル・バッジ判定は行いません。
