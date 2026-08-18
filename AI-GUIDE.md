@@ -32,6 +32,9 @@
 | 教材データの保存 | `StorageManager` |
 | 保存ありの学習進捗 | `ProgressManager` + `StorageManager` |
 | 保存不要の学習進捗 | `ProgressManager` |
+| 現在レベル管理 | `LevelManager` |
+| ステージ・単元の解放 | `UnlockManager` |
+| 保存ありのレベル・解放状態 | 各Manager + `StorageManager` |
 
 ## コンポーネント一覧
 
@@ -56,6 +59,8 @@
 - `NewRecordJudge`：現在値と過去最高値を比較。保存は行わない
 - `StorageManager`：namespace単位で値を保存・読み込み・削除。進捗や判定は行わない
 - `ProgressManager`：IDごとの完了状況、完了数、進捗率を管理。保存はStorageManagerへ委譲する
+- `LevelManager`：数値レベルの現在値、最小値、最大値、上下変更を管理。保存はStorageManagerへ委譲する
+- `UnlockManager`：IDごとの解放状態と初期解放状態を管理。保存はStorageManagerへ委譲する
 
 ## StorageManagerの使い方
 
@@ -87,6 +92,21 @@ console.log(progress.getCompletedCount(), progress.getPercent());
 ```
 
 保存キーは`progress`、データ形式は`{ version: 1, completed: [...] }`です。`edu:progress`のdetailは`{ id, completed, completedCount, total, percent }`です。初めて100%に到達したときは`edu:complete`も発火します。
+
+## LevelManager / UnlockManagerの使い方
+
+```js
+import { StorageManager, LevelManager, UnlockManager } from './index.js';
+
+const storage = new StorageManager('my-lesson');
+const level = new LevelManager({ min: 1, max: 5, storage });
+const unlock = new UnlockManager({ initialUnlocked: ['level-1'], storage });
+
+level.up();
+unlock.unlock('level-2');
+```
+
+LevelManagerの保存キーは`level`、UnlockManagerの保存キーは`unlocks`です。保存不要なら`storage`を省略します。ProgressManager、LevelManager、UnlockManagerは互いに自動連携しません。教材側で「完了したらレベルを上げる」「条件を満たしたら解放する」という流れを明示的に組み合わせます。
 
 ## 問題データ
 
@@ -134,6 +154,8 @@ const questions = [
 - `edu:storageremove`：`{ namespace, key, storageKey }`
 - `edu:storageclear`：`{ namespace, keys }`
 - `edu:storageerror`：`{ operation, namespace, key, message, fallback }`
+- `edu:levelchange`：`{ previous, current, min, max }`
+- `edu:unlock` / `edu:lock`：`{ id, unlocked, unlockedCount }`
 
 ```js
 document.addEventListener('edu:correct', (event) => {
@@ -158,6 +180,8 @@ document.addEventListener('edu:correct', (event) => {
 - 保存ありの学習進捗は`ProgressManager` + `StorageManager`、保存不要なら`ProgressManager`だけを使う
 - 進捗表示のCSSやDOMを`ProgressManager`内部に入れない
 - `ProgressManager`にLevelManager、UnlockManager、BadgeManager、AchievementManager、XPManagerの役割を持たせない
+- `ProgressManager`、`LevelManager`、`UnlockManager`へ同じ状態管理を重複実装しない
+- LevelManagerとUnlockManagerを内部で強制連携させず、教材側で条件を確認して組み合わせる
 - namespaceを教材ごとに分ける
 - `localStorage.clear()`を使用しない
 - 一時的なDOM状態などを何でも保存しない
@@ -177,4 +201,4 @@ document.addEventListener('edu:correct', (event) => {
 
 ## 今回扱わないもの
 
-LevelManager、UnlockManager、BadgeManager、AchievementManager、XPManager、`edu-assets`連携、`sounds-recipe-`連携、`edu-effects`連携は、この共通基盤の現在の責務に含めません。ProgressManagerは完了状況だけを管理し、必要になった段階で別コンポーネントとして設計します。
+BadgeManager、AchievementManager、XPManager、RewardManager、`edu-assets`連携、`sounds-recipe-`連携、`edu-effects`連携は、この共通基盤の現在の責務に含めません。ProgressManagerは完了状況、LevelManagerは現在レベル、UnlockManagerは解放状態だけを管理します。

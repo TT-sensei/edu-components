@@ -33,6 +33,12 @@ eventTarget.addEventListener('edu:combo', handler);</code></pre></details></arti
   ids: ['lesson-1', 'lesson-2']
 });
 progress.complete('lesson-1');</code></pre></details></article>
+      <article class="card"><span class="tag">レベル管理</span><h3>LevelManager</h3><p>現在のレベルを最小値・最大値の範囲内で管理します。保存あり・保存なしの両方に対応します。</p><div class="demo level-demo"><div class="level-value"><strong id="level-value">Lv1</strong><span id="level-range">Lv1〜Lv5</span></div><div class="row"><button id="level-up">レベルアップ</button><button id="level-down" class="secondary">レベルダウン</button><button id="level-reset" class="ghost">リセット</button></div><div class="row"><button data-level-set="1" class="secondary">Lv1</button><button data-level-set="3" class="secondary">Lv3</button><button data-level-set="5" class="secondary">Lv5</button></div><output id="level-output"></output></div><details><summary>簡単な使用例</summary><pre><code>const level = new LevelManager({ min: 1, max: 5 });
+level.up();
+level.setLevel(5);</code></pre></details></article>
+      <article class="card"><span class="tag">解放管理</span><h3>UnlockManager</h3><p>レベル・ステージ・単元など、IDで表せる項目の利用可能状態を管理します。</p><div class="demo unlock-demo"><div id="unlock-items" class="unlock-items"></div><div class="row"><button id="unlock-next">次の項目を解放</button><button id="unlock-reset" class="ghost">初期状態に戻す</button></div><output id="unlock-output"></output><div class="integration-demo"><p>小さな統合例：Lv1完了 → Lv2へ → Lv2解放</p><button id="integration-run">統合例を実行</button><output id="integration-output"></output></div></div><details><summary>簡単な使用例</summary><pre><code>progress.complete('lesson-1');
+level.setLevel(2);
+unlock.unlock('level-2');</code></pre></details></article>
     </section>
     <section class="events"><h2>イベントログ</h2><p class="muted">部品同士を直接結合せず、共通イベントで連携できます。</p><pre id="event-log" class="log" aria-live="polite">イベントを待っています…</pre></section>
   </main><footer><p>HTML / CSS / Vanilla JavaScript　・　ビルド不要　・　GitHub Pages対応</p></footer>

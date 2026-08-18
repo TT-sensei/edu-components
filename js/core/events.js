@@ -13,7 +13,10 @@ export const EDU_EVENTS = Object.freeze({
   STORAGE_REMOVE: 'edu:storageremove',
   STORAGE_CLEAR: 'edu:storageclear',
   STORAGE_ERROR: 'edu:storageerror',
-  PROGRESS: 'edu:progress'
+  PROGRESS: 'edu:progress',
+  LEVEL_CHANGE: 'edu:levelchange',
+  UNLOCK: 'edu:unlock',
+  LOCK: 'edu:lock'
 });
 
 export function resolveEventTarget(target) {

@@ -20,3 +20,5 @@ export { RankCalculator } from './js/rank-calculator.js';
 export { NewRecordJudge } from './js/new-record-judge.js';
 export { StorageManager } from './js/storage-manager.js';
 export { ProgressManager } from './js/progress-manager.js';
+export { LevelManager } from './js/level-manager.js';
+export { UnlockManager } from './js/unlock-manager.js';

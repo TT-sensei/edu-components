@@ -66,6 +66,8 @@ manager.show('PLAY');
 - `NewRecordJudge`：今回の記録と過去最高記録を比較
 - `StorageManager`：namespace単位の安全な保存・読み込み・削除
 - `ProgressManager`：問題・単元・ステージなどの完了状況と進捗率
+- `LevelManager`：数値レベルの現在値、範囲、変更
+- `UnlockManager`：IDで表す項目の解放状態
 
 ## StorageManager
 
@@ -98,6 +100,23 @@ progress.getPercent(); // 20
 ```
 
 保存データは`{ version: 1, completed: ['lesson-1'] }`です。保存キーはStorageManager内の`progress`で、namespaceは教材ごとに分けます。`ProgressManager`はlocalStorageを直接操作せず、表示・CSS・レベル解放・バッジ判定も担当しません。
+
+## LevelManager / UnlockManager
+
+`LevelManager`は現在の数値レベルだけを管理します。最小値・最大値を設定でき、`up()`や`down()`で範囲を超えません。`UnlockManager`はレベル、ステージ、単元などのIDが利用可能かどうかだけを管理します。両者は自動連携せず、教材側で条件を確認して組み合わせます。
+
+```js
+import { StorageManager, LevelManager, UnlockManager } from './index.js';
+
+const storage = new StorageManager('my-lesson');
+const level = new LevelManager({ min: 1, max: 5, storage });
+const unlock = new UnlockManager({ initialUnlocked: ['level-1'], storage });
+
+level.up();
+unlock.unlock('level-2');
+```
+
+保存キーはLevelManagerが`level`、UnlockManagerが`unlocks`です。保存形式はそれぞれ`{ version: 1, level: 2 }`、`{ version: 1, unlocked: ['level-1'] }`です。保存しない場合は`storage`を省略してメモリ上だけで利用できます。
 
 ## 共通の問題データ
 
@@ -139,7 +158,7 @@ if (checker.check(input.value, ['東京', 'Tokyo'])) {
 
 `edu:correct` / `edu:wrong` / `edu:screenchange` / `edu:combo` / `edu:complete`
 
-時間制チャレンジでは、`edu:timerstart` / `edu:timerwarning` / `edu:timeup` / `edu:newrecord` / `edu:rank`も利用できます。保存処理では`edu:storagesave` / `edu:storageremove` / `edu:storageclear` / `edu:storageerror`、進捗更新では`edu:progress`を利用できます。進捗率が初めて100%になったときは`edu:complete`も発火します。
+時間制チャレンジでは、`edu:timerstart` / `edu:timerwarning` / `edu:timeup` / `edu:newrecord` / `edu:rank`も利用できます。保存処理では`edu:storagesave` / `edu:storageremove` / `edu:storageclear` / `edu:storageerror`、進捗更新では`edu:progress`、レベル変更では`edu:levelchange`、解放状態の変更では`edu:unlock` / `edu:lock`を利用できます。進捗率が初めて100%になったときは`edu:complete`も発火します。
 
 ```js
 document.addEventListener('edu:correct', (event) => {
@@ -148,8 +167,8 @@ document.addEventListener('edu:correct', (event) => {
 });
 ```
 
-主なイベントdetailは、`edu:correct` / `edu:wrong` が `{ answer, correct, isCorrect, question, type }`、`edu:screenchange` が `{ from, to }`、`edu:combo` が `{ current, max }`です。`edu:progress`は `{ id, completed, completedCount, total, percent }`、`edu:complete`は完了種別を`detail.type`、結果を`detail.result`、代表値を`detail.value`で通知します。
+主なイベントdetailは、`edu:correct` / `edu:wrong` が `{ answer, correct, isCorrect, question, type }`、`edu:screenchange` が `{ from, to }`、`edu:combo` が `{ current, max }`です。`edu:progress`は `{ id, completed, completedCount, total, percent }`、`edu:levelchange`は `{ previous, current, min, max }`、`edu:unlock` / `edu:lock`は `{ id, unlocked, unlockedCount }`です。`edu:complete`は完了種別を`detail.type`、結果を`detail.result`、代表値を`detail.value`で通知します。
 
 ## 今後追加予定
 
-今後は、必要性を確認しながらLevelManager、UnlockManager、BadgeManager、AchievementManager、アクセシビリティ補助などを検討します。ProgressManagerは完了状況と進捗率、StorageManagerは保存処理だけを担当します。
+今後は、必要性を確認しながらBadgeManager、AchievementManager、アクセシビリティ補助などを検討します。ProgressManagerは完了状況、LevelManagerは現在レベル、UnlockManagerは利用可能状態、StorageManagerは保存処理だけを担当します。
