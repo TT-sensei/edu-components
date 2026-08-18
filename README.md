@@ -58,6 +58,12 @@ manager.show('PLAY');
 - `SortQuestion`：タップで項目を入れ替える並べ替え
 - `MultiSelect`：必要な個数を選ぶ複数選択
 - `RetryWrong`：間違えた問題の記録と復習用`QuestionPool`
+- `CountdownTimer`：指定秒数からのカウントダウン、停止、再開、警告
+- `CountUpTimer`：経過時間の計測
+- `TimeAttack`：制限時間内の問題数、スコア、コンボ管理
+- `Challenge60`：秒数を変更できる時間制チャレンジのラッパー
+- `RankCalculator`：結果からS / A / B / Cなどを算出
+- `NewRecordJudge`：今回の記録と過去最高記録を比較
 
 ## 共通の問題データ
 
@@ -98,6 +104,8 @@ if (checker.check(input.value, ['東京', 'Tokyo'])) {
 コンポーネントは直接依存しません。`CustomEvent`で以下のイベントを利用できます。
 
 `edu:correct` / `edu:wrong` / `edu:screenchange` / `edu:combo` / `edu:complete`
+
+時間制チャレンジでは、`edu:timerstart` / `edu:timerwarning` / `edu:timeup` / `edu:newrecord` / `edu:rank`も利用できます。
 
 ```js
 document.addEventListener('edu:correct', (event) => {
