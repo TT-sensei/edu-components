@@ -30,6 +30,8 @@
 | 結果ランク | `RankCalculator` |
 | 新記録判定 | `NewRecordJudge` |
 | 教材データの保存 | `StorageManager` |
+| 保存ありの学習進捗 | `ProgressManager` + `StorageManager` |
+| 保存不要の学習進捗 | `ProgressManager` |
 
 ## コンポーネント一覧
 
@@ -53,6 +55,7 @@
 - `RankCalculator`：教材側の基準でランク算出
 - `NewRecordJudge`：現在値と過去最高値を比較。保存は行わない
 - `StorageManager`：namespace単位で値を保存・読み込み・削除。進捗や判定は行わない
+- `ProgressManager`：IDごとの完了状況、完了数、進捗率を管理。保存はStorageManagerへ委譲する
 
 ## StorageManagerの使い方
 
@@ -67,6 +70,23 @@ const best = storage.load('bestScore', 0);
 ```
 
 内部キーは`edu:<namespace>:<key>`です。`clear()`は現在のnamespaceだけを削除します。数値、文字列、boolean、配列、object、nullを保存でき、localStorageが利用できない場合は簡易メモリフォールバックに切り替わります。
+
+## ProgressManagerの使い方
+
+保存ありなら教材固有のnamespaceを持つ`StorageManager`を渡します。保存なしなら`storage`を省略します。
+
+```js
+import { StorageManager, ProgressManager } from './index.js';
+
+const progress = new ProgressManager({
+  storage: new StorageManager('my-lesson'),
+  ids: ['lesson-1', 'lesson-2', 'lesson-3']
+});
+progress.complete('lesson-1');
+console.log(progress.getCompletedCount(), progress.getPercent());
+```
+
+保存キーは`progress`、データ形式は`{ version: 1, completed: [...] }`です。`edu:progress`のdetailは`{ id, completed, completedCount, total, percent }`です。初めて100%に到達したときは`edu:complete`も発火します。
 
 ## 問題データ
 
@@ -134,6 +154,10 @@ document.addEventListener('edu:correct', (event) => {
 - 問題データと処理を分離する
 - 各コンポーネントで`localStorage`を勝手に使わない
 - 教材側でlocalStorage操作を乱立させず、保存には`StorageManager`を優先する
+- `ProgressManager`内でlocalStorageを直接操作しない。保存担当は`StorageManager`にする
+- 保存ありの学習進捗は`ProgressManager` + `StorageManager`、保存不要なら`ProgressManager`だけを使う
+- 進捗表示のCSSやDOMを`ProgressManager`内部に入れない
+- `ProgressManager`にLevelManager、UnlockManager、BadgeManager、AchievementManager、XPManagerの役割を持たせない
 - namespaceを教材ごとに分ける
 - `localStorage.clear()`を使用しない
 - 一時的なDOM状態などを何でも保存しない
@@ -153,4 +177,4 @@ document.addEventListener('edu:correct', (event) => {
 
 ## 今回扱わないもの
 
-ProgressManager、LevelManager、UnlockManager、BadgeManager、AchievementManager、`edu-assets`連携、`sounds-recipe-`連携、`edu-effects`連携は、この共通基盤の現在の責務に含めません。必要になった段階で別コンポーネントとして設計します。
+LevelManager、UnlockManager、BadgeManager、AchievementManager、XPManager、`edu-assets`連携、`sounds-recipe-`連携、`edu-effects`連携は、この共通基盤の現在の責務に含めません。ProgressManagerは完了状況だけを管理し、必要になった段階で別コンポーネントとして設計します。
