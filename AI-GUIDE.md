@@ -2,7 +2,7 @@
 
 ## 目的
 
-`edu-components`は、小学校向けWeb教材で繰り返し使う画面遷移、問題出題、正誤判定、得点、コンボ、タイマー、チャレンジ処理を、HTML / CSS / Vanilla JavaScriptだけで再利用するための部品集です。
+`edu-components`は、小学校向けWeb教材で繰り返し使う画面遷移、問題出題、正誤判定、得点、コンボ、タイマー、進捗、レベル、解放、達成、バッジ処理を、HTML / CSS / Vanilla JavaScriptだけで再利用するための部品集です。
 
 - React / Vueなどのフレームワーク不要
 - npm・ビルド・サーバー・APIキー不要
