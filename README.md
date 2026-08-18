@@ -35,6 +35,15 @@
 </script>
 ```
 
+画面部品は、画面IDとDOM要素を登録して使います。
+
+```js
+const manager = new ScreenManager();
+manager.register('HOME', document.querySelector('#home'));
+manager.register('PLAY', document.querySelector('#play'));
+manager.show('PLAY');
+```
+
 ## コンポーネント一覧
 
 - `ScreenManager`：画面の表示切り替え、現在画面、戻る処理
@@ -75,4 +84,3 @@ document.addEventListener('edu:correct', (event) => {
 ## 今後追加予定
 
 タイマー、StorageManager、BadgeManager、進捗管理、出題履歴の保存、アクセシビリティ補助などを予定しています。まずは今回の5部品を共通基盤として安定させます。
-
