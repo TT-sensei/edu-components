@@ -16,7 +16,7 @@ export class CountdownTimer {
     if (this._running || this._remaining <= 0) return this;
     this._running = true;
     this._endAt = Date.now() + this._remaining * 1000;
-    emit(this.eventTarget, EDU_EVENTS.TIMER_START, { remaining: this._remaining, duration: this.duration });
+    emit(this.eventTarget, EDU_EVENTS.TIMER_START, { mode: 'countdown', value: this._remaining, remaining: this._remaining, duration: this.duration });
     this._interval = setInterval(() => this._tick(), 100);
     this._tick();
     return this;
@@ -41,10 +41,9 @@ export class CountdownTimer {
     const next = Math.max(0, Math.ceil((this._endAt - Date.now()) / 1000));
     if (next !== this._remaining) this._remaining = next;
     this._notifyTick();
-    this.warningAt.forEach((mark) => { if (this._remaining === mark && !this._warned.has(mark)) { this._warned.add(mark); emit(this.eventTarget, EDU_EVENTS.TIMER_WARNING, { remaining: mark }); } });
-    if (this._remaining <= 0) { this._running = false; clearInterval(this._interval); this._interval = null; emit(this.eventTarget, EDU_EVENTS.TIMEUP, { duration: this.duration }); }
+    this.warningAt.forEach((mark) => { if (this._remaining === mark && !this._warned.has(mark)) { this._warned.add(mark); emit(this.eventTarget, EDU_EVENTS.TIMER_WARNING, { mode: 'countdown', value: mark, remaining: mark, threshold: mark }); } });
+    if (this._remaining <= 0) { this._running = false; clearInterval(this._interval); this._interval = null; emit(this.eventTarget, EDU_EVENTS.TIMEUP, { mode: 'countdown', value: 0, remaining: 0, duration: this.duration }); }
   }
 
   _notifyTick() { if (typeof this.onTick === 'function') this.onTick(this._remaining); }
 }
-

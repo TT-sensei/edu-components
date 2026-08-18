@@ -29,7 +29,7 @@ export class ScreenManager {
       node.classList.toggle('is-active', active);
     });
     this.currentScreen = id;
-    if (options.scroll !== false && typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'instant' });
+    if (options.scroll !== false && typeof window !== 'undefined') window.scrollTo(0, 0);
     emit(this.eventTarget, EDU_EVENTS.SCREEN_CHANGE, { from: previous, to: id });
     return this;
   }
@@ -38,4 +38,3 @@ export class ScreenManager {
   setBackHandler(handler) { this.onBack = typeof handler === 'function' ? handler : null; return this; }
   back(...args) { return this.onBack ? this.onBack(this.currentScreen, ...args) : undefined; }
 }
-

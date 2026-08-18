@@ -2,6 +2,7 @@ import { InputQuestion } from './input-question.js';
 
 export class NumberInput extends InputQuestion {
   constructor(data = {}, options = {}) { super(data, { ...options, type: 'number-input' }); this.value = ''; }
+  reset(data = this.question) { super.reset(data); this.value = ''; return this; }
   press(key) {
     if (key === 'clear') this.value = '';
     else if (key === 'delete') this.value = this.value.slice(0, -1);
@@ -16,4 +17,3 @@ export class NumberInput extends InputQuestion {
     return container;
   }
 }
-

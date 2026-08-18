@@ -23,7 +23,7 @@
 
 [GitHub Pagesでカタログを見る](https://tt-sensei.github.io/edu-components/)
 
-`index.html` は説明だけでなく、5つのコンポーネントを実際に操作できるデモです。イベントログでは、コンポーネント間の疎結合な連携も確認できます。
+`index.html` は説明だけでなく、現在のコンポーネントを実際に操作できるカタログです。最後に、60秒チャレンジの開始・回答・スコア・コンボ・時間切れ・ランク表示までを確認できる完成デモがあります。
 
 ## 導入方法
 
@@ -31,7 +31,7 @@
 
 ```html
 <script type="module">
-  import { QuestionPool, AnswerChecker } from './index.js';
+  import { ScreenManager, QuestionPool, AnswerChecker } from './index.js';
 </script>
 ```
 
@@ -114,6 +114,8 @@ document.addEventListener('edu:correct', (event) => {
 });
 ```
 
+主なイベントdetailは、`edu:correct` / `edu:wrong` が `{ answer, correct, isCorrect, question, type }`、`edu:screenchange` が `{ from, to }`、`edu:combo` が `{ current, max }`です。`edu:complete`は完了種別を`detail.type`、結果を`detail.result`、代表値を`detail.value`で通知します。
+
 ## 今後追加予定
 
-タイマー、StorageManager、BadgeManager、進捗管理、出題履歴の保存、アクセシビリティ補助などを予定しています。まずは今回の5部品を共通基盤として安定させます。
+今後は、必要性を確認しながらStorageManager、ProgressManager、BadgeManager、アクセシビリティ補助などを検討します。現時点では、各コンポーネントは保存処理・画像素材・音源・CSS演出を内蔵していません。

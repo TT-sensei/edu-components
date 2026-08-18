@@ -10,6 +10,7 @@ export class QuestionPool {
   reset() { this.used.clear(); this.cursor = 0; return this; }
   get remaining() { return Math.max(0, this.items.length - this.used.size); }
   get allUsed() { return this.items.length > 0 && this.remaining === 0; }
+  getRemaining(criteria = {}) { return this.filter(criteria).filter((item) => !this.used.has(item)).length; }
 
   filter(criteria = {}) {
     return this.items.filter((item) => Object.entries(criteria).every(([key, value]) => {
@@ -39,4 +40,3 @@ export class QuestionPool {
 
   getUsed() { return [...this.used]; }
 }
-
