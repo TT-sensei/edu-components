@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>edu-components | 教材用JavaScriptコンポーネント</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero"><p class="eyebrow">EDUCATIONAL JAVASCRIPT COMPONENTS</p><h1>edu-components</h1><p>小学校向けWeb教材で繰り返し使う仕組みを、Vanilla JavaScriptで。</p></header>
+  <main>
+    <section class="catalog"><h2>操作できるカタログ</h2><p class="muted">各デモは、部品を実際に動かして結果を確認できます。</p>
+      <article class="card"><span class="tag">画面管理</span><h3>ScreenManager</h3><p>教材のHOME・PLAY・RESULTなどを切り替える部品。</p><div class="demo"><div class="screen-buttons"><button data-screen="home">HOME</button><button data-screen="play">PLAY</button><button data-screen="result">RESULT</button></div><div id="screen-home" class="mini-screen">ホーム画面</div><div id="screen-play" class="mini-screen">問題に挑戦中</div><div id="screen-result" class="mini-screen">結果画面</div><output id="screen-state"></output></div><details><summary>簡単な使用例</summary><pre><code>const manager = new ScreenManager({ screens: document.querySelectorAll('.screen') });
+manager.show('PLAY');</code></pre></details></article>
+      <article class="card"><span class="tag">問題管理</span><h3>QuestionPool</h3><p>問題を絞り込み、重複を避けながらランダム・順番に出題する部品。</p><div class="demo"><div class="row"><select id="pool-category"><option value="">すべての分類</option><option>国語</option><option>算数</option></select><select id="pool-level"><option value="">すべてのレベル</option><option>1</option><option>2</option></select><button id="pool-next">1問出題</button><button id="pool-reset" class="secondary">リセット</button></div><p id="pool-question" class="result-box">ボタンを押して出題</p><output id="pool-state"></output></div><details><summary>簡単な使用例</summary><pre><code>const pool = new QuestionPool(questions, { mode: 'random' });
+const question = pool.next({ category: '算数', level: 1 });</code></pre></details></article>
+      <article class="card"><span class="tag">正誤判定</span><h3>AnswerChecker</h3><p>文字列・数値・複数候補を判定し、正解・不正解イベントを発生させる部品。</p><div class="demo"><div class="row"><input id="answer-input" placeholder="答えを入力" aria-label="答え"><button id="answer-check">判定</button></div><p>正解例：<code>Tokyo</code> / <code>東京</code> / <code>とうきょう</code></p><output id="answer-result"></output></div><details><summary>簡単な使用例</summary><pre><code>checker.check(userAnswer, ['東京', 'Tokyo'], { ignoreCase: true });</code></pre></details></article>
+      <article class="card"><span class="tag">得点管理</span><h3>ScoreManager</h3><p>得点、正解数、不正解数、問題数、正答率をまとめて管理する部品。</p><div class="demo"><div class="row"><button id="score-correct">正解 +10</button><button id="score-wrong" class="secondary">不正解</button><button id="score-reset" class="ghost">リセット</button></div><pre id="score-result" class="result-box"></pre></div><details><summary>簡単な使用例</summary><pre><code>score.correct(10);
+score.wrong();
+console.log(score.getResult());</code></pre></details></article>
+      <article class="card"><span class="tag">連続正解</span><h3>ComboManager</h3><p>連続正解数と最大コンボを管理し、指定コンボ到達時に通知する部品。</p><div class="demo"><div class="row"><button id="combo-correct">正解</button><button id="combo-wrong" class="secondary">不正解</button><button id="combo-reset" class="ghost">リセット</button></div><p id="combo-result" class="combo-value">0 COMBO</p><output id="combo-event"></output></div><details><summary>簡単な使用例</summary><pre><code>const combo = new ComboManager({ milestones: [3, 5] });
+combo.correct();
+eventTarget.addEventListener('edu:combo', handler);</code></pre></details></article>
+    </section>
+    <section class="events"><h2>イベントログ</h2><p class="muted">部品同士を直接結合せず、共通イベントで連携できます。</p><pre id="event-log" class="log" aria-live="polite">イベントを待っています…</pre></section>
+  </main><footer><p>HTML / CSS / Vanilla JavaScript　・　ビルド不要　・　GitHub Pages対応</p></footer>
+  <script type="module" src="demo.js"></script>
+</body></html>
+
