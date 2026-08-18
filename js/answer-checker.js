@@ -14,15 +14,19 @@ export class AnswerChecker {
     return result;
   }
 
-  check(answer, correct, options = {}) {
+  matches(answer, correct, options = {}) {
+    if (typeof options.comparator === 'function') return Boolean(options.comparator(answer, correct, this));
     const candidates = Array.isArray(correct) ? correct : [correct];
     const numeric = options.numeric ?? false;
-    const matches = candidates.some((candidate) => numeric
+    return candidates.some((candidate) => numeric
       ? Number(answer) === Number(candidate) && String(answer).trim() !== ''
       : this.normalize(answer) === this.normalize(candidate));
-    const detail = { answer, correct, isCorrect: matches };
+  }
+
+  check(answer, correct, options = {}) {
+    const matches = this.matches(answer, correct, options);
+    const detail = { answer, correct, isCorrect: matches, ...(options.detail || {}) };
     emit(this.eventTarget, matches ? EDU_EVENTS.CORRECT : EDU_EVENTS.WRONG, detail);
     return matches;
   }
 }
-

@@ -51,6 +51,31 @@ manager.show('PLAY');
 - `AnswerChecker`：文字列・数値・複数候補の正誤判定
 - `ScoreManager`：得点、正解数、不正解数、問題数、正答率
 - `ComboManager`：現在コンボ、最大コンボ、指定コンボ到達イベント
+- `ChoiceQuestion`：2〜4択、シャッフル、二重回答防止
+- `TrueFalseQuestion`：○×問題
+- `InputQuestion`：文字入力、Enter回答
+- `NumberInput`：数字入力、教材内テンキー
+- `SortQuestion`：タップで項目を入れ替える並べ替え
+- `MultiSelect`：必要な個数を選ぶ複数選択
+- `RetryWrong`：間違えた問題の記録と復習用`QuestionPool`
+
+## 共通の問題データ
+
+問題は必要な項目だけを持つオブジェクトとして扱います。
+
+```js
+{
+  type: 'choice',
+  question: '日本の首都は？',
+  choices: ['東京', '大阪', '京都', '札幌'],
+  answer: '東京',
+  category: '社会',
+  level: 1,
+  explanation: '日本の首都は東京です。'
+}
+```
+
+`QuestionPool.next()`で問題を取り出し、その問題を形式別コンポーネントへ渡せます。各形式は`AnswerChecker`を利用し、判定時に`edu:correct`または`edu:wrong`を発火します。
 
 ## 簡単な使用例
 

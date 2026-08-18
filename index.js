@@ -4,4 +4,11 @@ export { QuestionPool } from './js/question-pool.js';
 export { AnswerChecker } from './js/answer-checker.js';
 export { ScoreManager } from './js/score-manager.js';
 export { ComboManager } from './js/combo-manager.js';
-
+export { QuestionComponent } from './js/question-component.js';
+export { ChoiceQuestion } from './js/choice-question.js';
+export { TrueFalseQuestion } from './js/true-false-question.js';
+export { InputQuestion } from './js/input-question.js';
+export { NumberInput } from './js/number-input.js';
+export { SortQuestion } from './js/sort-question.js';
+export { MultiSelect } from './js/multi-select.js';
+export { RetryWrong } from './js/retry-wrong.js';
