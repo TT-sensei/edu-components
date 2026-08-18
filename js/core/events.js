@@ -16,7 +16,9 @@ export const EDU_EVENTS = Object.freeze({
   PROGRESS: 'edu:progress',
   LEVEL_CHANGE: 'edu:levelchange',
   UNLOCK: 'edu:unlock',
-  LOCK: 'edu:lock'
+  LOCK: 'edu:lock',
+  ACHIEVEMENT: 'edu:achievement',
+  BADGE: 'edu:badge'
 });
 
 export function resolveEventTarget(target) {

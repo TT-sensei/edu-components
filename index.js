@@ -22,3 +22,5 @@ export { StorageManager } from './js/storage-manager.js';
 export { ProgressManager } from './js/progress-manager.js';
 export { LevelManager } from './js/level-manager.js';
 export { UnlockManager } from './js/unlock-manager.js';
+export { AchievementManager } from './js/achievement-manager.js';
+export { BadgeManager } from './js/badge-manager.js';

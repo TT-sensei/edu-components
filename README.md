@@ -68,6 +68,8 @@ manager.show('PLAY');
 - `ProgressManager`：問題・単元・ステージなどの完了状況と進捗率
 - `LevelManager`：数値レベルの現在値、範囲、変更
 - `UnlockManager`：IDで表す項目の解放状態
+- `AchievementManager`：教材側で判定した達成項目の記録
+- `BadgeManager`：獲得済みバッジの記録
 
 ## StorageManager
 
@@ -118,6 +120,26 @@ unlock.unlock('level-2');
 
 保存キーはLevelManagerが`level`、UnlockManagerが`unlocks`です。保存形式はそれぞれ`{ version: 1, level: 2 }`、`{ version: 1, unlocked: ['level-1'] }`です。保存しない場合は`storage`を省略してメモリ上だけで利用できます。
 
+## AchievementManager / BadgeManager
+
+`AchievementManager`は「はじめてクリア」「5コンボ」など、教材側で条件を判定した達成項目を記録します。条件判定や画像表示は担当しません。`BadgeManager`は、教材側から渡されたバッジ定義と獲得済み状態だけを管理します。AchievementとBadgeは自動連携せず、教材側でイベントを受けて接続します。
+
+```js
+import { AchievementManager, BadgeManager } from './index.js';
+
+const achievement = new AchievementManager({
+  achievements: [{ id: 'first-clear', title: 'はじめてクリア' }]
+});
+const badge = new BadgeManager({
+  badges: [{ id: 'clear-badge', name: 'クリア', image: 'https://example.com/badge.png' }]
+});
+
+achievement.achieve('first-clear');
+badge.award('clear-badge');
+```
+
+保存キーはAchievementManagerが`achievements`、BadgeManagerが`badges`です。保存形式はそれぞれ`{ version: 1, achieved: [...] }`、`{ version: 1, awarded: [...] }`です。`image`、`category`、`rarity`は任意項目です。
+
 ## 共通の問題データ
 
 問題は必要な項目だけを持つオブジェクトとして扱います。
@@ -158,17 +180,17 @@ if (checker.check(input.value, ['東京', 'Tokyo'])) {
 
 `edu:correct` / `edu:wrong` / `edu:screenchange` / `edu:combo` / `edu:complete`
 
-時間制チャレンジでは、`edu:timerstart` / `edu:timerwarning` / `edu:timeup` / `edu:newrecord` / `edu:rank`も利用できます。保存処理では`edu:storagesave` / `edu:storageremove` / `edu:storageclear` / `edu:storageerror`、進捗更新では`edu:progress`、レベル変更では`edu:levelchange`、解放状態の変更では`edu:unlock` / `edu:lock`を利用できます。進捗率が初めて100%になったときは`edu:complete`も発火します。
+時間制チャレンジでは、`edu:timerstart` / `edu:timerwarning` / `edu:timeup` / `edu:newrecord` / `edu:rank`も利用できます。保存処理では`edu:storagesave` / `edu:storageremove` / `edu:storageclear` / `edu:storageerror`、進捗更新では`edu:progress`、レベル変更では`edu:levelchange`、解放状態の変更では`edu:unlock` / `edu:lock`、新しい達成・バッジ獲得では`edu:achievement` / `edu:badge`を利用できます。進捗率が初めて100%になったときは`edu:complete`も発火します。
 
 ```js
 document.addEventListener('edu:correct', (event) => {
-  // edu-effects、sounds-recipe、将来のBadgeManagerなどと連携
+  // edu-effects、sounds-recipe、BadgeManagerなどと連携
   console.log(event.detail);
 });
 ```
 
-主なイベントdetailは、`edu:correct` / `edu:wrong` が `{ answer, correct, isCorrect, question, type }`、`edu:screenchange` が `{ from, to }`、`edu:combo` が `{ current, max }`です。`edu:progress`は `{ id, completed, completedCount, total, percent }`、`edu:levelchange`は `{ previous, current, min, max }`、`edu:unlock` / `edu:lock`は `{ id, unlocked, unlockedCount }`です。`edu:complete`は完了種別を`detail.type`、結果を`detail.result`、代表値を`detail.value`で通知します。
+主なイベントdetailは、`edu:correct` / `edu:wrong` が `{ answer, correct, isCorrect, question, type }`、`edu:screenchange` が `{ from, to }`、`edu:combo` が `{ current, max }`です。`edu:progress`は `{ id, completed, completedCount, total, percent }`、`edu:levelchange`は `{ previous, current, min, max }`、`edu:unlock` / `edu:lock`は `{ id, unlocked, unlockedCount }`、`edu:achievement`は`{ id, achievement, achievedCount }`、`edu:badge`は`{ id, badge, awardedCount }`です。`edu:complete`は完了種別を`detail.type`、結果を`detail.result`、代表値を`detail.value`で通知します。
 
 ## 今後追加予定
 
-今後は、必要性を確認しながらBadgeManager、AchievementManager、アクセシビリティ補助などを検討します。ProgressManagerは完了状況、LevelManagerは現在レベル、UnlockManagerは利用可能状態、StorageManagerは保存処理だけを担当します。
+今後は、必要性を確認しながらアクセシビリティ補助などを検討します。ProgressManagerは完了状況、LevelManagerは現在レベル、UnlockManagerは利用可能状態、AchievementManagerは達成状態、BadgeManagerは獲得状態、StorageManagerは保存処理だけを担当します。
